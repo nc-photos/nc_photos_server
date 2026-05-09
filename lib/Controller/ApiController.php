@@ -10,6 +10,7 @@ use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\JSONResponse;
+use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\OCSController;
 use OCP\App\IAppManager;
 use OCP\IRequest;
@@ -36,8 +37,8 @@ class ApiController extends OCSController {
 	 */
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
-	#[ApiRoute(verb: 'GET', url: '/api/recognize-api-key')]
-	public function index(): JSONResponse {
+	#[ApiRoute(verb: 'GET', url: '/api/recognize_api_key')]
+	public function recognizeApiKey(): Response {
 		if (self::recognizeIsInstalled()) {
 			// Obtain API Key
             if (null !== $this->apiKeyManager) {
@@ -54,6 +55,16 @@ class ApiController extends OCSController {
 		} else {
 			return new JSONResponse([], Http::STATUS_NOT_IMPLEMENTED);
 		}
+	}
+
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
+	#[ApiRoute(verb: 'GET', url: '/api/health')]
+	public function health(): Response {
+		return new JSONResponse([
+			"version" => 10000,
+			"recognizeOk" => self::recognizeIsInstalled(),
+		], Http::STATUS_OK);
 	}
 
 	/**
